@@ -79,13 +79,54 @@ margin-top:100px;
 var arrayCar=[];
 window.onload = function() {
 	var a = 0;
+	
 	document.forms[0].addEventListener('submit', function(e) {
 		e.preventDefault();
+		var error=0;
 	var car = {};
 	var fieldID= ['num', 'brand', 'model', 'year', 'km'];
 	var tr = document.createElement('tr');
 	var tbody = document.getElementById('tbody');
 	tbody.appendChild(tr);
+	
+	
+	for (var i= 1; i< fieldID.length; i++){
+		var field = document.getElementById(fieldID[i]);
+	if (field.value.length>0){
+		$(field).css('border-color', "#CCC");
+		$(field).css('color','#555');
+	} else{
+		$(field).attr("placeholder","Полето е задължително");
+		$(field).css('color','#ff0000');
+		$(field).css('border-color', "#ff0000");
+		error++;
+	}
+	if (fieldID[i] == "year"){
+		if($(field).val()<1950 || $(field).val() >2016){
+			$(field).attr("placeholder","Некоректна година");
+			$(field).css('color','#ff0000');
+			$(field).css('border-color', "#ff0000");
+			error++;
+		}
+		else {
+			$(field).css('border-color', "#CCC");
+			$(field).css('color','#555');
+		}
+	}
+	if(fieldID[i] == "km"){
+		if(!$.isNumeric($('#km').val())|| Math.floor($('#km').val())!= $('#km').val()){
+			$(field).attr("placeholder","Некоректен киломтраж");
+			$(field).css('color','#ff0000');
+			$(field).css('border-color', "#ff0000");
+			error++;
+		} else{
+			$(field).css('border-color', "#CCC");
+			$(field).css('color','#555');
+		}
+	}
+}
+	
+	if(error==0){
 	for (var i= 0; i< fieldID.length; i++){
 		if(i == 0){
 			car[fieldID[i]] = ++a;
@@ -95,13 +136,14 @@ window.onload = function() {
 		}
 		else{
 			var field = document.getElementById(fieldID[i]);
-			car[fieldID[i]] = handleError(field);	
+			car[fieldID[i]] = $(field).val();	
 			var td = document.createElement('td');
 			td.innerHTML= car[fieldID[i]];
 			$(tr).append(td);
 		}
 	}
 	arrayCar.push(car);
+	
  	var del = document.createElement("button");
  	$(del).attr('id', a);
  	$(del).attr('class', 'del');
@@ -113,23 +155,27 @@ window.onload = function() {
  	$(td).append(del);
  	$(td).append(edit);
  	$(tr).append(td);
+ 	}
  	
-	}, false);
-
+ 	$(del).click(function(){
+		$(this).closest("tr").remove();
+		var number = $(this).attr("id");
+		
+});
+ 	$(edit).click(function(){
+ 		var id = $(this).attr('id');
+ 		var brand = document.getElementById('brand');
+ 		var model = document.getElementById('model');
+ 		var year = document.getElementById('year');
+ 		var km = document.getElementById('km');
+ 		
+ 		brand.value = arrayCar[id-1].brand;
+ 		model.value = arrayCar[id-1].model;
+ 		year.value = arrayCar[id-1].year;
+ 		km.value = arrayCar[id-1].km;
+ 		});
+	}, false);	
 };
-
-function handleError(field){
-	if($(field).val()=="" ||$(field).val()==null){
-		$(field).attr("placeholder","Полето е задължително");
-		$(field).css('color','#ff0000');
-		$(field).css('border-color', "#ff0000");
-	} else{
-		$(field).css('border-color', "#CCC");
-		$(field).css('color','#555');
-		return $(field).val();
-	}
-	
-}
 
 </script>
 </body>
